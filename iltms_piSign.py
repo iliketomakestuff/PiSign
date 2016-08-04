@@ -34,24 +34,6 @@ GPIO.setmode(GPIO.BCM)
 # on/off button
 GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-GPIO.setup(14, GPIO.OUT)  # led
-GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # button
-
-GPIO.setup(15, GPIO.OUT)  # led
-GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # button
-
-GPIO.setup(25, GPIO.OUT)  # led
-GPIO.setup(8, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # button
-
-GPIO.setup(19, GPIO.OUT)  # led
-GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # button
-
-# Rows and chain length are both required parameters:
-matrix = Adafruit_RGBmatrix(32, 1)
-matrix.SetWriteCycles(4)
-# Bitmap example w/graphics prims
-image = Image.new("1", (32, 32))  # Can be larger than matrix if wanted!!
-
 leds = {
     18: 14,
     24: 15,
@@ -59,15 +41,25 @@ leds = {
     7: 19
 }
 
+for button, led in leds.items():
+    GPIO.setup(led, GPIO.OUT)  # led
+    GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # button
+
+# Rows and chain length are both required parameters:
+matrix = Adafruit_RGBmatrix(32, 1)
+matrix.SetWriteCycles(4)
+# Bitmap example w/graphics prims
+image = Image.new("1", (32, 32))  # Can be larger than matrix if wanted!!
+
 
 def showReady():
     lp = 0
     # runs a simple animation with the buttons LEDS so you know it's ready.
     while lp < 5:
-        for key in leds:
-            GPIO.output(leds[key], True)
+        for led in leds.values():
+            GPIO.output(led, True)
             time.sleep(.15)
-            GPIO.output(leds[key], False)
+            GPIO.output(led, False)
         lp += 1
     image = Image.open(imagePath + "logo.jpg")
     image.load()
@@ -77,8 +69,8 @@ def showReady():
 
 
 def clearlights():
-    for key in leds:
-        GPIO.output(leds[key], False)
+    for led in leds.values():
+        GPIO.output(led, False)
 
 
 def lookForButtons(buttonNum):
@@ -125,8 +117,6 @@ print('PiSign loaded.....  rock on    \m/')
 showReady()
 
 while True:
-    lookForButtons(18)
-    lookForButtons(24)
-    lookForButtons(8)
-    lookForButtons(7)
+    for key in leds:
+        lookForButtons(key)
     lookForShutDown()
