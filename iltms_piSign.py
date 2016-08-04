@@ -76,7 +76,7 @@ def clearlights():
 def lookForButtons(buttonNum):
     global pressed
     input_state = GPIO.input(buttonNum)
-    if input_state == False:
+    if not input_state:
         clearlights()
         # print('press '+str(buttonNum))
         if buttonNum != pressed:
@@ -106,8 +106,9 @@ def lookForButtons(buttonNum):
 
 def lookForShutDown():
     shutDownButton = GPIO.input(3)
-    if shutDownButton == False:
+    if not shutDownButton:
         showReady()
+        GPIO.cleanup()
         os.system('shutdown now -h')
 
 
@@ -120,3 +121,4 @@ while True:
     for key in leds:
         lookForButtons(key)
     lookForShutDown()
+    time.sleep(.05)  # don't lock the cpu
