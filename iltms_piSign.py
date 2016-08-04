@@ -60,8 +60,6 @@ leds = {
 	}
     
 def showReady():
-    global leds
-	global matrix
 	lp=0
     # runs a simple animation with the buttons LEDS so you know it's ready.
         while lp<5:
@@ -77,14 +75,11 @@ def showReady():
 	matrix.Clear()
 
 def clearlights():
-	global leds
 	for key in leds:
 		GPIO.output(leds[key],False)
 
 def lookForButtons(buttonNum):
 	global pressed
-	global matrix
-	global imagePath
 	input_state = GPIO.input(buttonNum);
 	if input_state == False:
 		clearlights()
@@ -115,7 +110,6 @@ def lookForButtons(buttonNum):
 			time.sleep(.6)
 			
 def lookForShutDown():
-	global os
 	shutDownButton = GPIO.input(3);
 	if shutDownButton == False:
 		showReady()
